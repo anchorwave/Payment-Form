@@ -1,0 +1,1 @@
+Global options for payment forms.

@@ -1,0 +1,15 @@
+#payment_form_wrapper label {
+	float:left;
+	width:160px;
+}
+
+#payment_form_wrapper br {
+	clear:both;
+}
+
+.payment_form_error {
+	background-color: #ffcdd1; 
+	border: 1px dashed #e10c0c;
+	padding:5px;
+	margin:5px;
+}

@@ -1,0 +1,24 @@
+.payment_form_meta_box_wrapper textarea {
+	width:100%;
+	height:300px;
+}
+.payment_form_meta_box_wrapper input {
+	width:300px;
+}
+.payment_form_meta_box_wrapper label {
+	font-weight:bold;
+	width:140px;
+}
+
+.payment_form_meta_box_wrapper br {
+	clear:both;
+}
+.transaction_output_variables, .form_variables {
+	font-size:1.3em;
+	margin:5px;
+	padding:5px;
+	
+}
+.transaction_output_variables .variables, .form_variables .variables {
+	font-style:italic;
+}

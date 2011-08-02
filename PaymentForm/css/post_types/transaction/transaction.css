@@ -1,0 +1,16 @@
+#transaction-meta-box label {
+	width:140px;
+	float:left;
+}
+
+#transaction-meta-box input {
+	width:300px;
+}
+
+#transaction-meta-box br {
+	clear:both;
+}
+
+.transaction_details {
+	padding:10px;
+}
