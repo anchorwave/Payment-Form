@@ -69,7 +69,41 @@ class PaymentFormOptions {
 			'PaymentFormOptions::inputCallbackEmail',
 			'payment_form_options',
 			'payment_form_general'
-		);		
+		);
+
+		add_settings_field(
+			'payment_form_email_from',
+			'Email From',
+			'PaymentFormOptions::inputCallbackEmailFrom',
+			'payment_form_options',
+			'payment_form_general'
+		);
+
+		add_settings_field(
+			'payment_form_email_from_name',
+			'Email From Name',
+			'PaymentFormOptions::inputCallbackEmailFromName',
+			'payment_form_options',
+			'payment_form_general'
+		);			
+		
+		
+		add_settings_field(
+			'payment_form_developer_mode',
+			'Developer Mode',
+			'PaymentFormOptions::inputCallbackDeveloperMode',
+			'payment_form_options',
+			'payment_form_general'
+		);
+		
+		add_settings_field(
+			'payment_form_test_mode',
+			'Test Mode',
+			'PaymentFormOptions::inputCallbackTestMode',
+			'payment_form_options',
+			'payment_form_general'
+		);	
+		
 
 	}
 	
@@ -117,6 +151,38 @@ class PaymentFormOptions {
 			'value' => $options['email']
 		) );
 	}	
+
+	public static function inputCallbackDeveloperMode() {
+		$options = get_option( 'payment_form_options' );
+		echo self::$template->getOutput( '/fields/developer_mode.tpl', array(
+			'name' => 'payment_form_options[developer_mode]',
+			'checked' => self::getChecked( $options['developer_mode'] )
+		) );
+	}
+	
+	public static function inputCallbackTestMode() {
+		$options = get_option( 'payment_form_options' );
+		echo self::$template->getOutput( '/fields/test_mode.tpl', array(
+			'name' => 'payment_form_options[test_mode]',
+			'checked' => self::getChecked( $options['test_mode'] )
+		) );
+	}		
+
+	public static function inputCallbackEmailFrom() {
+		$options = get_option( 'payment_form_options' );
+		echo self::$template->getOutput( '/fields/email_from.tpl', array(
+			'name' => 'payment_form_options[email_from]',
+			'value' => $options['email_from']
+		) );
+	}
+	
+	public static function inputCallbackEmailFromName() {
+		$options = get_option( 'payment_form_options' );
+		echo self::$template->getOutput( '/fields/email_from_name.tpl', array(
+			'name' => 'payment_form_options[email_from_name]',
+			'value' => $options['email_from_name']
+		) );
+	}		
 	
 	/*
 	* Sanitize Callbacks

@@ -38,12 +38,18 @@ require_once( PAYMENT_FORM_DIR . '/classes/post_types/ProductPostType.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/short_codes/PaymentFormShortCode.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/short_codes/ProductShortCode.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/pages/PaymentFormOptions.php' );
+
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentProcessorRegistor.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentProcessor.php' );
+
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentHandler.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentFormSubmission.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentFormEmailHandler.php' );
-require_once( PAYMENT_FORM_DIR . '/classes/TransactionOutput.php' );
+require_once( PAYMENT_FORM_DIR . '/classes/ReceiptHandler.php' );
+
+require_once( PAYMENT_FORM_DIR . '/classes/transaction_output/iTransactionOutput.php' );
+require_once( PAYMENT_FORM_DIR . '/classes/transaction_output/TransactionOutput.php' );
+require_once( PAYMENT_FORM_DIR . '/classes/transaction_output/TransactionOutputHTML.php' );
 
 add_action( 'admin_menu', 'PaymentForm::add_admin_menus' );
 add_action( 'init', 'PaymentProcessorRegistor::registerPaymentProcessors' );
@@ -58,6 +64,8 @@ add_action( 'payment_handled', 'PaymentFormEmailHandler::sendReceiptEmail', 10, 
 add_action( 'payment_handled', 'PaymentFormEmailHandler::sendAdminEmail', 10, 3 );
 add_action( 'payment_handled', 'PaymentFormShortCode::setPaymentReceived', 10, 3 );
 add_action( 'payment_handled', 'PaymentHandler::checkPayment', 10, 3 );
+
+add_filter( 'payment_form_receipt', 'ReceiptHandler::getOutput', 10, 2 );
 
 // Product Shortcode
 add_shortcode( 'product', 'ProductShortCode::getOutput' );
@@ -89,7 +97,7 @@ add_action( 'admin_init', 'PaymentFormPostType::enqueueScripts' );
 // Transaction Post Type
 add_action( 'init', 'TransactionPostType::registerType' );
 add_action( 'admin_menu', 'TransactionPostType::addMetaBox' );
-add_action( 'save_post', 'TransactionPostType::savePost' );
+add_action( 'admin_menu', 'TransactionPostType::removeAddNew' );
 add_action( 'admin_init', 'TransactionPostType::enqueueScripts' );
 
 // Product Post Type

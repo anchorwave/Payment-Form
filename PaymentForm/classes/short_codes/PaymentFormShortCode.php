@@ -3,7 +3,6 @@ class PaymentFormShortCode {
 
 	private $template;
 	static $errors = array();
-	
 	static $purchase = array();
 	static $products = array();
 	
@@ -17,11 +16,7 @@ class PaymentFormShortCode {
 	
 	public static function getOutput( $atts ) {
 		if ( ! empty( self::$purchase ) ) {
-			$receipt_str = '<br/>' . get_post_meta( self::$purchase['submission']->attr( 'form_id' ), "receipt", true );
-			$receipt_str = nl2br( $receipt_str );
-			// TODO apply filters
-			$receipt = new TransactionOutput( self::$purchase );
-			$output = $receipt->getOutput( $receipt_str );
+			$output = apply_filters( 'payment_form_receipt', null, self::$purchase );
 		} else {
 			$shortcode = new PaymentFormShortCode();
 			$output = $shortcode->_getOutput( $atts );
@@ -210,24 +205,45 @@ class PaymentFormShortCode {
 	}
 	
 	public static function sslOnly() {
-		if(strtolower($_SERVER['HTTPS'])!='on')
-		{
-			$rpath=str_replace('://','s://',$_SERVER["SCRIPT_URI"]);
-			if(strpos($rpath,'www')===false)
-				$rpath=str_replace('://','://www.',$rpath);
-			if($_GET)
-			{
-				foreach($_GET as $g=>$v)
-				{
-					if(!$getstr) $getstr='?';
-					else $getstr.='&';
-					$getstr.=$g."=".$v;
-				}
-				$rpath.=$getstr;
+		if ( ! self::isSslAvailable() ) return;
+		if( self::isSslOn() ) return;
+		
+		$rpath=str_replace('://','s://',$_SERVER["SCRIPT_URI"]);
+		
+		if(strpos($rpath,'www')===false)
+			$rpath=str_replace('://','://www.',$rpath);
+		if( $_GET ) {
+			foreach($_GET as $g=>$v) {
+				if(!$getstr) $getstr='?';
+				else $getstr.='&';
+				$getstr.=$g."=".$v;
 			}
-			header('location:'.$rpath);
-			die();
+			$rpath.=$getstr;
 		}
+		header('location:'.$rpath);
+		die();
+	}
+	
+	public function isSslAvailable() {
+		$curl = curl_init( sprintf( "https://%s/", $_SERVER['SERVER_NAME'] ) );
+		curl_setopt($curl, CURLOPT_NOBODY, TRUE);
+		curl_setopt($curl, CURL_HEADERFUNCTION, 'ignoreHeader');
+		curl_exec($curl);
+		$res = curl_errno($curl);
+
+		if($res == 0) {
+			$info = curl_getinfo($curl);
+			if( $info['http_code'] == 200 ) {
+				# Supports SSL
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public function isSslOn() {
+		if(strtolower($_SERVER['HTTPS'])!='on') return false;
+		return true;
 	}
 	
 	public function isShortcodeUsed() {

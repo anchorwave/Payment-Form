@@ -1,10 +1,5 @@
-<h3>Billing</h3>
+<h3>Billing Address</h3>
 
-<p>
-	<label for="companyname">Company/organization Name</label>
-	<input type="text" name="company" value="%company%"/>
-	<br/>
-</p>
 <p>
 	<label for="contactname">First Name</label>
 	<input type="text" name="firstname" value="%firstname%"/>
@@ -13,6 +8,11 @@
 <p>
 	<label for="contactname">Last Name</label>
 	<input type="text" name="lastname" value="%lastname%"/>
+	<br/>
+</p>
+<p>
+	<label for="companyname">Company/organization Name</label>
+	<input type="text" name="company" value="%company%"/>
 	<br/>
 </p>
 <p>
@@ -50,6 +50,9 @@
 	<input type="text" name="email" value="%email%"/>
 	<br/>
 </p>
+
+<h3>Billing Information</h3>
+
 <p>
 	<label for="creditcard">Credit Card</label>
 	<input type="text" name="card_number"/>

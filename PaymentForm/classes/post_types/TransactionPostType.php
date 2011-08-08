@@ -67,23 +67,8 @@ class TransactionPostType {
 	public function getPurchaseInfo() {
 		global $post;
 		$items = get_post_meta( $post->ID, 'items', true );
-		$output = new TransactionOutput( null );
+		$output = new TransactionOutputHTML( null );
 		return $output->getPurchaseInfo( $items );
-	}	
-
-	public static function savePost( $post_id ) {
-		/*if ( get_post_type( $post_id ) == 'transaction' ) {			
-			update_post_meta( $post_id, 'firstname', $_POST['firstname'] );
-			update_post_meta( $post_id, 'lastname', $_POST['lastname'] );
-			update_post_meta( $post_id, 'address1', $_POST['address1'] );
-			update_post_meta( $post_id, 'address2', $_POST['address2'] );
-			update_post_meta( $post_id, 'city', $_POST['city'] );
-			update_post_meta( $post_id, 'state', $_POST['state'] );
-			update_post_meta( $post_id, 'zipcode', $_POST['zipcode'] );
-			update_post_meta( $post_id, 'phone', $_POST['phone'] );
-			update_post_meta( $post_id, 'email', $_POST['email'] );
-			update_post_meta( $post_id, 'amount', $_POST['amount'] );
-		}*/
 	}
 	
 	public function _savePost( $post_id, $processor, $submission ) {
@@ -134,7 +119,12 @@ class TransactionPostType {
 		if ( $_GET['post_type'] == 'transaction' ) return true;
 		if ( get_post_type( $_GET['post'] ) == 'transaction' ) return true;
 		return false;
-	}	
+	}
+	
+	public static function removeAddNew() {
+		global $submenu;
+		unset($submenu['edit.php?post_type=transaction'][10]);
+	}
 	
 }
 ?>

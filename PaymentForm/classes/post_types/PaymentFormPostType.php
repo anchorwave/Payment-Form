@@ -126,9 +126,9 @@ class PaymentFormPostType {
 		return array(
 			'form' => $custom->form,
 			'receipt' => $custom->receipt,
-			'email' => $custom->email,
 			'footer' => $custom->footer,
 			'header' => $custom->header,
+			'email' => $custom->email,
 			'email_subject' => $custom->email_subject,
 			'admin_email' => $custom->admin_email,
 			'admin_email_subject' => $custom->admin_email_subject,

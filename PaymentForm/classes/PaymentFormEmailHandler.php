@@ -31,16 +31,30 @@ class PaymentFormEmailHandler {
 	private function sendEmail( $to, $subject_str, $body_str ) {
 	
 		$body_str = nl2br( $body_str );
-		$output = new TransactionOutput( array( 'processor' => $this->processor, 'submission' => $this->submission ) );
-		$subject = $output->getOutput( $subject_str );
+		$output = new TransactionOutputHTML( array( 'processor' => $this->processor, 'submission' => $this->submission ) );
+		$subject = $output->applyVariables( $subject_str );
 		$body = $output->getOutput( $body_str );
 		
-		// TODO move this to settings
-		$headers = 'From: Adopt a Cop Tucson <noreply@adoptacoptucson.com>' . "\r\n";
+		$headers = "";
+		if ( $from = $this->getFrom() ) {
+			$headers = $from . "\r\n";
+		}
 		
 		wp_mail( $to, $subject,	$body, $headers );
 	}
 	
+	public function getFrom() {
+		$from_name = PaymentFormOptions::attr( 'email_from_name' );
+		$from_email = PaymentFormOptions::attr( 'email_from' );
+		
+		if ( $from_name && $from_email ) {
+			return sprintf( 'From: %s <%s>', $from_name, $from_email );
+		} else if ( $from_name ) {
+			return sprintf( 'From: %s', $from_name );
+		} else if ( $from_email ) {
+			return sprintf( 'From: %s', $from_email );
+		}
+	}
 
 	public static function setContentType() {
 		return 'text/html';

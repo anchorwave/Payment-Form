@@ -2,12 +2,12 @@
 <div class="transaction_details">
 	<p>
 		<label>Transaction Id</label>
-		<input type="text" name="transaction_id" value="%transaction_id%"/>
+		<span>%transaction_id%</span>
 		<br/>
 	</p>
 	<p>
 		<label>Successful Payment</label>
-		<input type="text" name="success" value="%success%"/>
+		<span>%success%</span>
 		<br/>
 	</p>
 </div>
@@ -19,61 +19,61 @@
 <div class="transaction_details">
 	<p>
 		<label>First Name</label>
-		<input type="text" name="firstname" value="%firstname%"/>
+		<span>%firstname%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Last Name</label>
-		<input type="text" name="lastname" value="%lastname%"/>
+		<span>%lastname%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Address Line 1</label>
-		<input type="text" name="address1" value="%address1%"/>
+		<span>%address1%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Address Line 2</label>
-		<input type="text" name="address2" value="%address2%"/>
+		<span>%address2%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>City</label>
-		<input type="text" name="city" value="%city%"/>
+		<span>%city%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>State</label>
-		<input type="text" name="state" value="%state%"/>
+		<span>%state%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Zip Code</label>
-		<input type="text" name="zipcode" value="%zipcode%"/>
+		<span>%zipcode%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Phone</label>
-		<input type="text" name="phone" value="%phone%"/>
+		<span>%phone%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Email</label>
-		<input type="text" name="email" value="%email%"/>
+		<span>%email%</span>
 		<br/>
 	</p>
 
 	<p>
 		<label>Transaction Amount</label>
-		<input type="text" name="amount" value="%amount%"/>
+		<span>%amount%</span>
 		<br/>
 	</p>
 </div>

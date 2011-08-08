@@ -6,6 +6,7 @@ Name: Authorize.Net
 class AuthorizeNetPaymentProcessor extends PaymentProcessor
 {
 	private $url = "https://secure.authorize.net/gateway/transact.dll";
+	private $dev_url = "https://test.authorize.net/gateway/transact.dll";
 
 	private $defaults = array(
 			'x_delim_data'=>"TRUE",
@@ -38,6 +39,10 @@ class AuthorizeNetPaymentProcessor extends PaymentProcessor
 
 	public function __construct()
 	{
+		if ( PaymentFormOptions::attr( 'developer_mode' ) == 1 ) {
+			$this->url = $this->dev_url;
+		}
+	
 		// Set functional defaults
 		if(!((func_num_args() == 1 && is_array(func_get_arg(0))) || (func_num_args() == 2)))
 		{

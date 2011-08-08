@@ -10,8 +10,7 @@ class PaymentHandler {
 	}
 	
 	private function _handlePayment( $submission ) {
-
-		//$this->getPaymentProcessor()->setTestRequest();
+	
 		$this->getPaymentProcessor()->setCardType();
 		$this->getPaymentProcessor()->setCardNumber( $submission->attr( 'card_number') );
 		$this->getPaymentProcessor()->setExpiration( $submission->attr('card_expiration_month'), $submission->attr('card_expiration_year') );
@@ -51,10 +50,13 @@ class PaymentHandler {
 				return false;
 			}
 			
-			error_log( "username:$username password:$password" );
-			
 			$processor_class = PaymentForm::getProcessor( $processor_name );
 			$this->payment_processor = new $processor_class( array( $username, $password ) );
+			
+			if ( PaymentFormOptions::attr( 'test_mode' ) ) {
+				$this->payment_processor->setTestRequest();
+			}
+			
 		}
 		return $this->payment_processor;
 	}
