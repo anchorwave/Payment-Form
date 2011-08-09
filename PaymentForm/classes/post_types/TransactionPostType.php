@@ -36,18 +36,19 @@ class TransactionPostType {
 			'high'
 		);
 	}
-	
+		
 	public static function showMetaBox() {
 		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/transaction/' );
-		echo self::$template->getOutput( 'meta-box.tpl', self::getPostArgs() );
+		echo self::$template->getOutput( 'meta-box.tpl', self::getMetaboxArgs() );
 	}
 	
-	public function getPostArgs() {
+	public function getMetaboxArgs() {
 		global $post;
 		$custom = get_post_custom( $post->ID );
 		$custom = ( object ) array_map( 'array_shift', $custom );
 
-		return array(
+		$args = array(
+			'id' => $post->ID,
 			'items' => self::getPurchaseInfo(),
 			'firstname' => $custom->firstname,
 			'lastname' => $custom->lastname,
@@ -62,6 +63,8 @@ class TransactionPostType {
 			'success' => ( $custom->success ) ? 'Yes' : 'No',
 			'transaction_id' => $custom->transaction_id
 		);
+		$args = apply_filters( 'get_transaction_metabox_args', $args );
+		return $args;
 	}
 	
 	public function getPurchaseInfo() {
@@ -86,6 +89,8 @@ class TransactionPostType {
 			update_post_meta( $post_id, 'items', $submission->attr( 'payment_form_product' ) );
 			update_post_meta( $post_id, 'transaction_id', $processor->getTransactionId() );
 			update_post_meta( $post_id, 'success', $processor->getIsSuccess() );
+			
+			do_action( 'transaction_save_post', $post_id, $processor, $submission );
 		}
 	}
 	

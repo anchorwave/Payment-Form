@@ -91,6 +91,9 @@ add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxForm' );
 add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxEmail' );
 add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxAdminEmail' );
 add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxReceipt' );
+add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxShortcode' );
+add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxProducts' );
+add_action( 'admin_menu', 'PaymentFormPostType::addMetaBoxSettings' );
 add_action( 'save_post', 'PaymentFormPostType::savePost' );
 add_action( 'admin_init', 'PaymentFormPostType::enqueueScripts' );
 

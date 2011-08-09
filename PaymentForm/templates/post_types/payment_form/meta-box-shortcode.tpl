@@ -1,0 +1,1 @@
+<strong>[payment_form id=%id%]</strong>

@@ -7,9 +7,23 @@
 	clear:both;
 }
 
+#payment_form_wrapper .required {
+	color:FireBrick;
+}
+
+#payment_form_wrapper input[type=text] {
+	width:300px;
+}
+
+#payment_form_wrapper textarea {
+	width:300px;
+	height:150px;
+}
+
 .payment_form_error {
 	background-color: #ffcdd1; 
 	border: 1px dashed #e10c0c;
 	padding:5px;
 	margin:5px;
+	color:black;
 }

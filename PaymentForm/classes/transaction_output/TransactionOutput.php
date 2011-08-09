@@ -23,13 +23,18 @@ abstract class TransactionOutput {
 	}
 	
 	public function getOutput( $template_str ) {
+		$template_str = $this->filterOutput( $template_str );
 		$output = $this->applyVariables( $template_str );
-		$output = $this->filterOutput( $output );
 		return $output;
 	}
 	
 	public function applyVariables( $template_str ) {
-			$output = $this->template->getOutput( $template_str, array(
+		$output = $this->template->getOutput( $template_str, $this->getTransactionOutputVariables(), true );
+		return $output;
+	}
+	
+	public function getTransactionOutputVariables() {
+		$output = array(
 			'title' => $this->getTitle(),
 			'description' => $this->getDescription(),
 			'purchase' => $this->getPurchaseInfo( $products = $this->submission->attr( 'payment_form_product' ) ),
@@ -45,7 +50,8 @@ abstract class TransactionOutput {
 			'email' => $this->submission->attr( 'email' ),
 			'phone' => $this->submission->attr( 'phone' ),
 			'amount' => money_format( '%i', $this->submission->getTotal() )
-		), true );
+		);
+		$output = apply_filters( 'get_transaction_output_variables', $output, $this->submission );
 		return $output;
 	}
 	

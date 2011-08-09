@@ -63,12 +63,17 @@ class PaymentFormShortCode {
 			'form_id' => $this->post->ID,
 			'header' => $this->post->header,
 			'footer' => $this->post->footer,
-			'title' => $this->post->post_title,
+			'title' => $this->getTitle(),
 			'products' => $this->getProducts(),
 			'billing' => $this->getBilling(),
 			'selected' => $this->getSelected(),
 			'total' => $this->getTotal()
 		) );
+	}
+	
+	private function getTitle() {
+		if ( ! get_post_meta( $this->post->ID, 'display_title', true ) ) return;
+		return sprintf( '<h2>%s</h2>', $this->post->post_title );
 	}
 	
 	private function getNonce() {
@@ -79,7 +84,8 @@ class PaymentFormShortCode {
 	
 	private function getProducts() {
 		$products = $this->post->form;
-		$products = do_shortcode( $products );
+		$products = do_shortcode( $products ); // apply product variables
+		$products = $this->template->getOutput( $products, $_POST, true );
 		return $products;
 	}
 	

@@ -64,13 +64,21 @@ jQuery( document ).ready( function( $ ) {
 	
 	}
 
+	var display_total = function() {
+		var payment_form = new PaymentForm();
+		var total = payment_form.getTotal();
+		$( '#payment_form_total' ).html( 'USD ' + total.toFixed( 2 ) );
+	}
+	
 	/*
 	* Calculate the total
 	*/
 	$( '[name^=payment_form_product]' ).bind( 'click change keyup', function() {
-		var payment_form = new PaymentForm();
-		var total = payment_form.getTotal();
-		$( '#payment_form_total' ).html( 'USD ' + total.toFixed( 2 ) );
+		display_total();
 	} );
+	
+	display_total();
+	
+	
 	
 } );

@@ -18,7 +18,7 @@ class TransactionOutputHTML extends TransactionOutput {
 	}
 	
 	public function filterOutput( $output ) {
-		//$output = nl2br( $output );
+		$output = nl2br( $output );
 		return $this->getTemplate()->getOutput( '/html/wrapper.tpl', array( 'output' => $output ) );
 	}
 	

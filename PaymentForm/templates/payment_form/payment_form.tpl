@@ -1,7 +1,7 @@
 <div id="payment_form_wrapper">
 	%header%
 	%error%
-	<h3>%title%</h3>
+	%title%
 	<form method="POST" action="">
 		%products%
 		%total%

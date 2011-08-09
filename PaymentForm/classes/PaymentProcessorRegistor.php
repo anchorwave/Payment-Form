@@ -45,7 +45,7 @@ class PaymentProcessorRegistor {
 	private function getProcessorLabel( $filename ) {
 		// Label is stored in a comment
 		$subject = file_get_contents( PAYMENT_FORM_DIR . '/classes/payment_processors/' . $filename );
-		$pattern = '/Name:([A-Za-z0-9\. ]*)\n/';
+		$pattern = '/Name:([A-Za-z0-9\.\s]*)\n/';
 		preg_match( $pattern, $subject, $matches );
 		$label = $matches[1];
 		$label = trim( $label );

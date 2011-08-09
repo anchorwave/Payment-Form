@@ -38,7 +38,7 @@ class PaymentFormPostType {
 	}
 
 	public static function addMetaBoxReceipt() {
-		add_meta_box( 'payment-form-meta-box-receipn',
+		add_meta_box( 'payment-form-meta-box-receipt',
 			'Receipt Template',
 			'PaymentFormPostType::showMetaBoxReceipt', 
 			'payment_form',
@@ -87,11 +87,46 @@ class PaymentFormPostType {
 		);
 	}
 	
+	public static function addMetaBoxShortcode() {
+		add_meta_box( 'payment-form-meta-box-shortcode',
+			'Shortcode',
+			'PaymentFormPostType::showMetaBoxShortcode', 
+			'payment_form',
+			'side',
+			'high'
+		);
+	}
+	
+	public static function addMetaBoxProducts() {
+		add_meta_box( 'payment-form-meta-box-products',
+			'Products',
+			'PaymentFormPostType::showMetaBoxProducts', 
+			'payment_form',
+			'side',
+			'high'
+		);	
+	}
+	
+	public static function addMetaBoxSettings() {
+		add_meta_box( 'payment-form-meta-box-settings',
+			'Settings',
+			'PaymentFormPostType::showMetaBoxSettings',
+			'payment_form',
+			'side',
+			'high'
+		);			
+	}
+	
 	public static function showMetaBoxForm() {
 		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/payment_form/' );
 		echo self::$template->getOutput( 'meta-box-form.tpl', self::getPostArgs() );
 	}
 
+	public static function showMetaBoxSettings() {
+		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/payment_form/' );
+		echo self::$template->getOutput( 'meta-box-settings.tpl', self::getPostArgs() );
+	}	
+	
 	public static function showMetaBoxReceipt() {
 		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/payment_form/' );
 		echo self::$template->getOutput( 'meta-box-receipt.tpl', self::getPostArgs() );
@@ -115,15 +150,39 @@ class PaymentFormPostType {
 	public static function showMetaBoxHeader() {
 		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/payment_form/' );
 		echo self::$template->getOutput( 'meta-box-header.tpl', self::getPostArgs() );
-	}	
+	}
 	
+	public static function showMetaBoxShortcode() {
+		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/payment_form/' );
+		echo self::$template->getOutput( 'meta-box-shortcode.tpl', self::getPostArgs() );
+	}
+
+	public static function showMetaBoxProducts() {
+		self::$template = new AwTemplate( PAYMENT_FORM_DIR . '/templates/post_types/payment_form/' );
+		echo self::$template->getOutput( 'meta-box-products.tpl', array( 'products' => self::getAvailableProducts() ) );
+	}
+	
+	public function getAvailableProducts() {
+		$products = get_posts( array(
+			'post_type' => 'product',
+			'numberposts' => -1
+		) );
+		$temp = array();
+		while( $product = array_shift( $products ) ) {
+			$temp[] = sprintf( '<strong>%d</strong> - %s', $product->ID, $product->post_title );
+		}
+		return implode( '<br/>', $temp );
+	}
 	
 	public function getPostArgs() {
 		global $post;
 		$custom = get_post_custom( $post->ID );
-		$custom = ( object ) array_map( 'array_shift', $custom );
+		$custom = array_map( 'array_shift', $custom );
+		$custom = array_map( 'htmlspecialchars', $custom );
+		$custom = ( object ) $custom;
 		
 		return array(
+			'id' => $post->ID,
 			'form' => $custom->form,
 			'receipt' => $custom->receipt,
 			'footer' => $custom->footer,
@@ -133,10 +192,15 @@ class PaymentFormPostType {
 			'admin_email' => $custom->admin_email,
 			'admin_email_subject' => $custom->admin_email_subject,
 			'transaction-output-variables' => self::getTransactionOutputVariables(),
-			'form-variables' => self::getFormVariables()
+			'form-variables' => self::getFormVariables(),
+			'display_title_checked' => self::getChecked( $custom->display_title )
 		);
 	}
 	
+	public function getChecked( $value ) {
+		if ( $value ) return 'checked="checked"';
+	}
+
 	public function getFormVariables() {
 		return self::$template->getOutput( '/form-variables.tpl' );
 	}
@@ -155,6 +219,7 @@ class PaymentFormPostType {
 			update_post_meta( $post_id, 'admin_email', $_POST['admin_email'] );
 			update_post_meta( $post_id, 'header', $_POST['header'] );
 			update_post_meta( $post_id, 'footer', $_POST['footer'] );
+			update_post_meta( $post_id, 'display_title', $_POST['display_title'] );
 		}
 	}
 	

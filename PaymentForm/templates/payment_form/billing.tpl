@@ -1,12 +1,12 @@
 <h3>Billing Address</h3>
 
 <p>
-	<label for="contactname">First Name</label>
+	<label for="contactname">First Name <span class="required">*</span></label>
 	<input type="text" name="firstname" value="%firstname%"/>
 	<br/>
 </p>
 <p>
-	<label for="contactname">Last Name</label>
+	<label for="contactname">Last Name <span class="required">*</span></label>
 	<input type="text" name="lastname" value="%lastname%"/>
 	<br/>
 </p>
@@ -16,7 +16,7 @@
 	<br/>
 </p>
 <p>
-	<label for="address">Address</label>
+	<label for="address">Address <span class="required">*</span></label>
 	<input type="text" name="address1" value="%address1%"/>
 	<br/>
 </p>
@@ -26,27 +26,27 @@
 	<br/>
 </p>
 <p>
-	<label for="city">City</label>
+	<label for="city">City <span class="required">*</span></label>
 	<input type="text" name="city" value="%city%"/>
 	<br/>
 </p>
 <p>
-	<label for="state">State</label>
+	<label for="state">State <span class="required">*</span></label>
 	<input type="text" name="state" value="%state%"/>
 	<br/>
 </p>
 <p>
-	<label for="zip">Zip Code</label>
+	<label for="zip">Zip Code <span class="required">*</span></label>
 	<input type="text" name="zipcode" value="%zipcode%"/>
 	<br/>
 </p>
 <p>
-	<label for="phonenumber">Phone Number</label>
+	<label for="phonenumber">Phone Number <span class="required">*</span></label>
 	<input type="text" name="phone" value="%phone%"/>
 	<br/>
 </p>
 <p>
-	<label for="email">Email</label>
+	<label for="email">Email <span class="required">*</span></label>
 	<input type="text" name="email" value="%email%"/>
 	<br/>
 </p>
@@ -54,12 +54,12 @@
 <h3>Billing Information</h3>
 
 <p>
-	<label for="creditcard">Credit Card</label>
+	<label for="creditcard">Credit Card <span class="required">*</span></label>
 	<input type="text" name="card_number"/>
 	<br/>
 </p>
 <p>
-	<label>Expiration Date</label>
+	<label>Expiration Date <span class="required">*</span></label>
 	<select name="card_expiration_month">
 		<option value="0">month</option>
 		<option value="1">January</option>
@@ -83,7 +83,7 @@
 	<br/>
 </p>
 <p>
-	<label>Card Verification Code</label>
+	<label>Card Verification Code <span class="required">*</span></label>
 	<input type="text" name="card_code"/>
 	<br/>
 </p>
