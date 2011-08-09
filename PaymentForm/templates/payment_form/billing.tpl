@@ -32,7 +32,10 @@
 </p>
 <p>
 	<label for="state">State <span class="required">*</span></label>
-	<input type="text" name="state" value="%state%"/>
+	<select name="state">
+		<option value=""></option>
+		%state_options%
+	</select>
 	<br/>
 </p>
 <p>
@@ -52,7 +55,7 @@
 </p>
 
 <h3>Billing Information</h3>
-
+%card_types%
 <p>
 	<label for="creditcard">Credit Card <span class="required">*</span></label>
 	<input type="text" name="card_number"/>

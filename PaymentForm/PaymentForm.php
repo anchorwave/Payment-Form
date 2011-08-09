@@ -38,6 +38,10 @@ require_once( PAYMENT_FORM_DIR . '/classes/post_types/ProductPostType.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/short_codes/PaymentFormShortCode.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/short_codes/ProductShortCode.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/pages/PaymentFormOptions.php' );
+require_once( PAYMENT_FORM_DIR . '/classes/common/AwSSL.php' );
+
+require_once( PAYMENT_FORM_DIR . '/classes/error_handlers/NonceHandler.php' );
+require_once( PAYMENT_FORM_DIR . '/classes/error_handlers/ProcessorErrorHandler.php' );
 
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentProcessorRegistor.php' );
 require_once( PAYMENT_FORM_DIR . '/classes/PaymentProcessor.php' );
@@ -63,9 +67,11 @@ add_action( 'payment_handled', 'TransactionPostType::saveTransaction', 10, 3 );
 add_action( 'payment_handled', 'PaymentFormEmailHandler::sendReceiptEmail', 10, 3 );
 add_action( 'payment_handled', 'PaymentFormEmailHandler::sendAdminEmail', 10, 3 );
 add_action( 'payment_handled', 'PaymentFormShortCode::setPaymentReceived', 10, 3 );
-add_action( 'payment_handled', 'PaymentHandler::checkPayment', 10, 3 );
+add_action( 'payment_handled', 'ProcessorErrorHandler::checkPayment', 10, 3 );
 
 add_filter( 'payment_form_receipt', 'ReceiptHandler::getOutput', 10, 2 );
+
+add_action( 'payment_form_ssl_only', 'AwSSL::sslOnly' );
 
 // Product Shortcode
 add_shortcode( 'product', 'ProductShortCode::getOutput' );
@@ -77,11 +83,13 @@ add_action( 'wp', 'PaymentFormShortCode::enqueueScripts' );
 
 add_action( 'payment_form_error', 'PaymentFormShortCode::addError' );
 add_action( 'payment_form_product', 'PaymentFormShortCode::addProduct' );
-add_action( 'payment_form_ssl_only', 'PaymentFormShortCode::sslOnly' );
+
 
 // Payment Form Submission ( hooks need to occur after payment form shortcode hooks )
 add_action( 'wp', 'PaymentFormSubmission::submit' );
-add_filter( 'get_payment_form_submission_errors', 'PaymentFormSubmission::verifyNonce', 10, 2 );
+
+add_filter( 'get_payment_form_extra_fields_footer', 'NonceHandler::addNonceField' );
+add_filter( 'get_payment_form_submission_errors', 'NonceHandler::verifyNonce', 10, 2 );
 
 // Payment Form Post Type
 add_action( 'init', 'PaymentFormPostType::registerType' );

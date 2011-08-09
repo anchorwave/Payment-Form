@@ -1,0 +1,1 @@
+Which card types should be displayed as available payment methods

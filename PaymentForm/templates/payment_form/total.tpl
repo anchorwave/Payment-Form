@@ -1,8 +1,8 @@
 <p>
 	<label><strong>Total</strong></label>
-	<div id="payment_form_total">
+	<span id="payment_form_total">
 	
-	</div>
+	</span>
 	%prices%
 	<br/>
 </p>

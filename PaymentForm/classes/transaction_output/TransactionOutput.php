@@ -51,7 +51,7 @@ abstract class TransactionOutput {
 			'phone' => $this->submission->attr( 'phone' ),
 			'amount' => money_format( '%i', $this->submission->getTotal() )
 		);
-		$output = apply_filters( 'get_transaction_output_variables', $output, $this->submission );
+		$output = apply_filters( 'get_transaction_variables', $output, $this->submission );
 		return $output;
 	}
 	

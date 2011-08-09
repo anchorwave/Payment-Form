@@ -22,29 +22,15 @@ class PaymentFormSubmission {
 	}
 	
 	private function _submit() {
-	
 		if ( ! PaymentFormShortCode::isShortCodeUsed() ) return;
 		if ( empty( $_POST['form_id'] ) ) return;
 		if ( ! $this->checkSubmission() ) return;
-		
 		do_action( 'payment_form_submission', $this );
 	}
 	
 	/*
 	* Check for Errors
 	*/
-	
-	public static function verifyNonce( $errors, $submission ) {
-	
-		$nonce = $submission->attr( 'payment_form_nonce' );
-		if ( ( $_SESSION['payment_form_nonce'] == $nonce ) &&
-			( $nonce != "" )
-		) {
-			$errors[] = "Your Payment has already been processed.";
-		}
-		$_SESSION['payment_form_nonce'] = $submission->attr( 'payment_form_nonce' );
-		return $errors;
-	}
 	
 	private function checkSubmission() {
 		$errors = array();
@@ -57,24 +43,7 @@ class PaymentFormSubmission {
 		}
 		return true;
 	}
-	
-	/*
-	* Creating and checking a nonce
-	*/	
-	
-	public function getNonce() {
-		return hash( 'sha512', self::getRandomString() );
-	}
-	
-	public function getRandomString( $bits = 256 ) {
-		$bytes = ceil($bits / 8);
-		$return = '';
-		for ($i = 0; $i < $bytes; $i++) {
-			$return .= chr(mt_rand(0, 255));
-		}
-		return $return;
-	}
-	
+		
 	/*
 	* Getters
 	*/

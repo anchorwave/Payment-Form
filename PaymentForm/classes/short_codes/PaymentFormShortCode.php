@@ -11,7 +11,7 @@ class PaymentFormShortCode {
 	}
 
 	/*
-	* Display a payment form
+	* Display a payment form or receipt
 	*/
 	
 	public static function getOutput( $atts ) {
@@ -44,22 +44,22 @@ class PaymentFormShortCode {
 		$post = array_merge( $post, $custom );
 		$this->post = (object) $post;
 	}
-	
-	private function checkForm( $id ) {
-		if ( (int) $id == 0 ) return false;
-		if ( get_post_type( $id ) != "payment_form" ) return false;
 		
-		return true;
-	}	
-	
 	/*
-	* Methods to get form content
+	* Methods to get form 
 	*/
 	
 	private function getPaymentForm() {
+	
+		$extra_footer = array();
+		$extra_footer = apply_filters( 'get_payment_form_extra_fields_footer', $extra_footer );
+		$extra_header = array();
+		$extra_header = apply_filters( 'get_payment_form_extra_fields_header', $extra_header );
+		
 		return $this->template->getOutput( '/payment_form.tpl', array(
 			'error' => $this->getErrorMessage(),
-			'nonce' => $this->getNonce(),
+			'extra_footer' => implode( $extra_footer ),
+			'extra_header' => implode( $extra_header ),
 			'form_id' => $this->post->ID,
 			'header' => $this->post->header,
 			'footer' => $this->post->footer,
@@ -75,17 +75,13 @@ class PaymentFormShortCode {
 		if ( ! get_post_meta( $this->post->ID, 'display_title', true ) ) return;
 		return sprintf( '<h2>%s</h2>', $this->post->post_title );
 	}
-	
-	private function getNonce() {
-		return sprintf( '<input type="hidden" name="payment_form_nonce" value="%s"/>',
-			PaymentFormSubmission::getNonce()
-		);
-	}
-	
+		
 	private function getProducts() {
 		$products = $this->post->form;
 		$products = do_shortcode( $products ); // apply product variables
-		$products = $this->template->getOutput( $products, $_POST, true );
+		$vars = array();
+		$vars = apply_filters( 'get_product_variables', $vars );
+		$products = $this->template->getOutput( $products, $vars, true );
 		return $products;
 	}
 	
@@ -101,8 +97,37 @@ class PaymentFormShortCode {
 			'zipcode' => $_POST['zipcode'],
 			'phone' => $_POST['phone'],
 			'email' => $_POST['email'],
-			'year_options' => $this->getYearOptions()
+			'state_options' => $this->getStateOptions(),
+			'year_options' => $this->getYearOptions(),
+			'card_types' => $this->getCardTypes()
 		) );
+	}
+	
+	public function getCardTypes() {
+		$card_types = PaymentFormOptions::attr( 'card_types' );
+		
+		$images = array();
+		if ( PaymentFormOptions::attr( 'visa' ) ) {
+			$images[] = $this->getImage( 'visa.png', 'Visa' );
+		}
+		if ( PaymentFormOptions::attr( 'mastercard' ) ) {
+			$images[] = $this->getImage( 'mastercard.png', 'Mastercard' );
+		}
+		if ( PaymentFormOptions::attr( 'discover' ) ) {
+			$images[] = $this->getImage( 'discover.png', 'Discover' );
+		}
+		if ( PaymentFormOptions::attr( 'amex' ) ) {
+			$images[] = $this->getImage( 'american_express.png', 'American Express' );
+		}
+		
+		if ( empty( $images ) ) return;
+		
+		return $this->template->getOutput( '/card_types.tpl', array( 'card_types' => implode( $images ) ) );
+	}
+	
+	public function getImage( $filename, $alt ) {
+		$src = sprintf( '%s/images/%s', PAYMENT_FORM_URL, $filename );
+		return sprintf( '<img src="%s" alt="%s">', $src, $alt );
 	}
 	
 	public function getYearOptions() {
@@ -114,9 +139,19 @@ class PaymentFormShortCode {
 		return implode( $temp );
 	}
 	
-	/*
-	*
-	*/
+	public function getStateOptions() {
+		$states = array( 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO','CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 
+			'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',	'MA', 'MI',	'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 
+			'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+		);
+		$temp = array();
+		while( $state = array_shift( $states ) ) {
+			$selected = '';
+			if ( $_POST['state'] == $state ) $selected = 'selected="selected"';
+			$temp[] = sprintf( '<option value="%1$s" %2$s>%1$s</option>', $state, $selected );
+		}
+		return implode( $temp );
+	}
 	
 	private function getSelected() {
 		if ( empty( $_POST['payment_form_product'] ) ) return;
@@ -131,9 +166,6 @@ class PaymentFormShortCode {
 		return implode( $temp );
 	}
 	
-	/*
-	* Product Total
-	*/
 	public function getTotal() {
 		$prices = array_map( 'PaymentFormShortCode::mapPrice', self::$products );
 		return $this->template->getOutput( '/total.tpl', array(
@@ -153,6 +185,13 @@ class PaymentFormShortCode {
 			self::$products[] = $id;
 		}
 	}
+	
+	private function checkForm( $id ) {
+		if ( (int) $id == 0 ) return false;
+		if ( get_post_type( $id ) != "payment_form" ) return false;
+		
+		return true;
+	}		
 	
 	/*
 	* Error Messages
@@ -187,79 +226,29 @@ class PaymentFormShortCode {
 	/*
 	* Scripts/Styles
 	*/
-	public static function enqueueScripts() {
 	
+	public static function enqueueScripts() {
 		if ( self::isShortcodeUsed() ) {
-		
 			do_action( 'payment_form_ssl_only' );
-		
 			if ( ! session_id() ) session_start();
-			
-			wp_enqueue_script( 'payment_form_shortcode_js', // Handle
+			wp_enqueue_script( 'payment_form_shortcode_js',
 				PAYMENT_FORM_URL . '/js/short_codes/payment_form/payment_form.js',
-				array( 'jquery' ), // Dependencies
-				'1.0', // Version
-				true // In Footer
+				array( 'jquery' ), '1.0', true
 			);
-			
 			wp_enqueue_style( 'payment_form_css',
 				PAYMENT_FORM_URL . '/css/short_codes/payment_form/payment_form.css'
 			);
-			
 			do_action( 'payment_form_enqueue_scripts' );
 		}
-	}
-	
-	public static function sslOnly() {
-		if ( ! self::isSslAvailable() ) return;
-		if( self::isSslOn() ) return;
-		
-		$rpath=str_replace('://','s://',$_SERVER["SCRIPT_URI"]);
-		
-		if(strpos($rpath,'www')===false)
-			$rpath=str_replace('://','://www.',$rpath);
-		if( $_GET ) {
-			foreach($_GET as $g=>$v) {
-				if(!$getstr) $getstr='?';
-				else $getstr.='&';
-				$getstr.=$g."=".$v;
-			}
-			$rpath.=$getstr;
-		}
-		header('location:'.$rpath);
-		die();
-	}
-	
-	public function isSslAvailable() {
-		$curl = curl_init( sprintf( "https://%s/", $_SERVER['SERVER_NAME'] ) );
-		curl_setopt($curl, CURLOPT_NOBODY, TRUE);
-		curl_setopt($curl, CURL_HEADERFUNCTION, 'ignoreHeader');
-		curl_exec($curl);
-		$res = curl_errno($curl);
-
-		if($res == 0) {
-			$info = curl_getinfo($curl);
-			if( $info['http_code'] == 200 ) {
-				# Supports SSL
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public function isSslOn() {
-		if(strtolower($_SERVER['HTTPS'])!='on') return false;
-		return true;
 	}
 	
 	public function isShortcodeUsed() {
 		global $posts;
 		$pattern = get_shortcode_regex(); 
 		preg_match( '/'.$pattern.'/s', $posts[0]->post_content, $matches ); 
-		
 		if (is_array($matches) && $matches[2] == 'payment_form') return true;
 		return false;
 	}
-	
+
 }
 ?>

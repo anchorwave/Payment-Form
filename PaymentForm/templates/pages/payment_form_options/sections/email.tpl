@@ -1,0 +1,1 @@
+Settings for receipt email, and who to send the admin email.
